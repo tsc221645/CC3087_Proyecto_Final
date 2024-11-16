@@ -9,8 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.uvg.ana.booktribev2.category.CategoryScreen
 import com.uvg.ana.booktribev2.components.BottomBar
 import com.uvg.ana.booktribev2.components.TopBar
+import com.uvg.ana.booktribev2.details.BookDetailsScreen
+import com.uvg.ana.booktribev2.explore.ExploreScreen
 import com.uvg.ana.booktribev2.home.HomeRoute
 import com.uvg.ana.booktribev2.login.LoginScreen
 import com.uvg.ana.booktribev2.register.RegisterScreen
@@ -79,10 +82,36 @@ fun SetupNavigation() {
             composable("profile") {
                 ProfileScreen(navController = navController)
             }
-            // Additional screens (explore, search, saved)
             composable("explore") {
-                // Implement Explore Screen
+                ExploreScreen(
+                    navController = navController,
+                    onBookClick = { bookId ->
+                        navController.navigate("bookDetails/$bookId")
+                    },
+                    onCategoryClick = { category ->
+                        navController.navigate("category/$category")
+                    }
+                )
             }
+
+            composable("bookDetails/{bookId}") { backStackEntry ->
+                val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+                BookDetailsScreen(bookId = bookId)
+            }
+
+
+            composable("category/{category}") { backStackEntry ->
+                val category = backStackEntry.arguments?.getString("category") ?: ""
+                CategoryScreen(
+                    navController = navController, // Pass the navController
+                    category = category,
+                    onBookClick = { bookId ->
+                        navController.navigate("bookDetails/$bookId")
+                    }
+                )
+            }
+
+
             composable("search") {
                 SearchScreen()
             }

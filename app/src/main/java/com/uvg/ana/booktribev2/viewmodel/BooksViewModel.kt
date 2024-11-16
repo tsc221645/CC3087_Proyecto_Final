@@ -16,6 +16,12 @@ class BooksViewModel(private val repository: BooksRepository = BooksRepository()
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
+    private val _selectedBook = MutableStateFlow<BookItem?>(null)
+    val selectedBook: StateFlow<BookItem?> = _selectedBook
+
+    init {
+        searchBooks("bestsellers") // Fetch default books for the Explore page
+    }
 
     fun searchBooks(query: String) {
         viewModelScope.launch {
@@ -23,11 +29,11 @@ class BooksViewModel(private val repository: BooksRepository = BooksRepository()
             try {
                 if (query.isNotBlank()) {
                     val apiKey = BuildConfig.GOOGLE_BOOKS_API_KEY
-                    println("Searching for books with query: $query and API key: $apiKey")
                     val response = repository.searchBooks(query, apiKey)
+                    println("Books fetched: ${response.items.size} items")
                     _books.value = response.items
                 } else {
-                    println("Query is empty")
+                    println("Empty query")
                     _books.value = emptyList()
                 }
             } catch (e: Exception) {
@@ -39,4 +45,43 @@ class BooksViewModel(private val repository: BooksRepository = BooksRepository()
         }
     }
 
+    fun getBooksByCategory(category: String) {
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                val apiKey = BuildConfig.GOOGLE_BOOKS_API_KEY
+                val response = repository.searchBooks("subject:$category", apiKey) // Include category in query
+                println("Books fetched for category '$category': ${response.items.size} items")
+                _books.value = response.items // Update books list
+            } catch (e: Exception) {
+                println("Error fetching books for category '$category': ${e.message}")
+                _books.value = emptyList() // Set empty list on error
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun fetchBookDetails(bookId: String) {
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                val apiKey = BuildConfig.GOOGLE_BOOKS_API_KEY
+                val response = repository.getBookDetails(bookId, apiKey)
+                _selectedBook.value = response
+            } catch (e: Exception) {
+                println("Error fetching book details: ${e.message}")
+                _selectedBook.value = null
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+    fun getBookDetails(bookId: String): BookItem? {
+        return books.value.find { it.id == bookId }
+    }
+
+
+
 }
+
