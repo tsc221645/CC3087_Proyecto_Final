@@ -15,6 +15,7 @@ import com.uvg.ana.booktribev2.home.HomeRoute
 import com.uvg.ana.booktribev2.login.LoginScreen
 import com.uvg.ana.booktribev2.register.RegisterScreen
 import com.uvg.ana.booktribev2.profile.ProfileScreen
+import com.uvg.ana.booktribev2.search.SearchScreen
 
 @Composable
 fun SetupNavigation() {
@@ -83,7 +84,7 @@ fun SetupNavigation() {
                 // Implement Explore Screen
             }
             composable("search") {
-                // Implement Search Screen
+                SearchScreen()
             }
             composable("saved") {
                 // Implement Saved Screen

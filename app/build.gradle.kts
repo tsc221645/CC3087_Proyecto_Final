@@ -1,4 +1,3 @@
-
 import java.util.Properties
 
 // Load properties from local.properties if it exists
@@ -10,8 +9,10 @@ if (localPropertiesFile.exists()) {
     println("Warning: local.properties file not found. Ensure the file exists for development.")
 }
 
+// Retrieve properties
 val supabaseKey: String = localProperties.getProperty("supabaseKey") ?: ""
 val supabaseUrl: String = localProperties.getProperty("supabaseUrl") ?: ""
+val googleBooksKey: String = localProperties.getProperty("googleBooksKey") ?: ""
 
 plugins {
     alias(libs.plugins.android.application)
@@ -38,6 +39,7 @@ android {
         // Pass properties to BuildConfig
         buildConfigField("String", "SUPABASE_KEY", "\"$supabaseKey\"")
         buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
+        buildConfigField("String", "GOOGLE_BOOKS_API_KEY", "\"$googleBooksKey\"")
     }
 
     buildTypes {
@@ -49,20 +51,25 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -89,22 +96,28 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Navegación Compose
+    // Navigation Compose
     implementation(libs.androidx.compose.navigation)
 
     // Kotlin Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
-    // Coil para imágenes
+    // Coil for images
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Supabase Auth
     implementation("io.github.jan-tennert.supabase:gotrue-kt:1.3.2")
     implementation("io.ktor:ktor-client-cio:2.3.4")
     implementation("androidx.compose.material3:material3:1.1.2")
-    implementation ("androidx.navigation:navigation-compose:2.7.2")
+    implementation("androidx.navigation:navigation-compose:2.7.2")
 
     implementation("io.ktor:ktor-client-core:2.3.1")
     implementation("io.ktor:ktor-client-cio:2.3.1")
     implementation("io.ktor:ktor-client-serialization:2.3.1")
+
+    // Google Books API
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 }
