@@ -84,12 +84,10 @@ fun SetupNavigation() {
             }
             composable("explore") {
                 ExploreScreen(
-                    navController = navController,
-                    onBookClick = { bookId ->
-                        navController.navigate("bookDetails/$bookId")
-                    },
+                    navController = navController, // Pass NavController directly to ExploreScreen
                     onCategoryClick = { category ->
-                        navController.navigate("category/$category")
+                        val encodedCategory = java.net.URLEncoder.encode(category, "UTF-8")
+                        navController.navigate("category/$encodedCategory")
                     }
                 )
             }
@@ -103,8 +101,8 @@ fun SetupNavigation() {
             composable("category/{category}") { backStackEntry ->
                 val category = backStackEntry.arguments?.getString("category") ?: ""
                 CategoryScreen(
-                    navController = navController, // Pass the navController
                     category = category,
+                    navController = navController, // Pass the navController
                     onBookClick = { bookId ->
                         navController.navigate("bookDetails/$bookId")
                     }
@@ -112,8 +110,10 @@ fun SetupNavigation() {
             }
 
 
+
+
             composable("search") {
-                SearchScreen()
+                SearchScreen(navController = navController)
             }
             composable("saved") {
                 // Implement Saved Screen

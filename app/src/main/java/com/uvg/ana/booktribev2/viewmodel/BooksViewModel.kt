@@ -66,8 +66,9 @@ class BooksViewModel(private val repository: BooksRepository = BooksRepository()
         viewModelScope.launch {
             _loading.value = true
             try {
-                val apiKey = BuildConfig.GOOGLE_BOOKS_API_KEY
-                val response = repository.getBookDetails(bookId, apiKey)
+                val response = repository.getBookDetails(bookId)
+                println("Fetched Book Details: $response")
+                println("Thumbnail URL: ${response.volumeInfo.imageLinks?.thumbnail}")
                 _selectedBook.value = response
             } catch (e: Exception) {
                 println("Error fetching book details: ${e.message}")
@@ -77,6 +78,8 @@ class BooksViewModel(private val repository: BooksRepository = BooksRepository()
             }
         }
     }
+
+
     fun getBookDetails(bookId: String): BookItem? {
         return books.value.find { it.id == bookId }
     }

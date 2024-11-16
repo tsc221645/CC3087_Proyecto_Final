@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,119 +18,152 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.uvg.ana.booktribev2.network.BookItem
 import com.uvg.ana.booktribev2.viewmodel.BooksViewModel
 import java.net.URLEncoder
 
 @Composable
 fun ExploreScreen(
-    navController: NavController, // Accept navController as a parameter
-    booksViewModel: BooksViewModel = viewModel(),
-    onBookClick: (String) -> Unit, // Navigate to BookDetailsScreen
-    onCategoryClick: (String) -> Unit // Navigate to CategoryScreen
+    navController: NavController,
+    onCategoryClick: (String) -> Unit
 ) {
+    val booksViewModel: BooksViewModel = viewModel()
     val books by booksViewModel.books.collectAsState()
     val loading by booksViewModel.loading.collectAsState()
-    val categories = listOf(
-        "Most Searched",
-        "Adventure",
-        "Comedy",
-        "Fiction",
-        "Romance",
-        "Science",
-        "Fantasy",
-        "History",
-        "Horror",
-        "Mystery"
-    )
+
+    val categories = listOf("Adventure", "Fantasy", "Science", "Mystery", "Romance") // Categories
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // Categories Section
         Text(
-            text = "Explore",
+            text = "Categories",
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Categories
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        LazyColumn(
+            modifier = Modifier.padding(bottom = 16.dp)
         ) {
-            items(categories.size) { index ->
-                val category = categories[index]
-                TextButton(
-                    onClick = {
-                        val encodedCategory = URLEncoder.encode(category, "UTF-8") // Encode the category
-                        onCategoryClick(encodedCategory)
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary
-                    )
+            items(categories) { category ->
+                Button(
+                    onClick = { onCategoryClick(category) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
                 ) {
-                    Text(text = category, fontWeight = FontWeight.Bold)
+                    Text(text = category)
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Books Section
+        Text(
+            text = "Books",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        // Books
-        if (loading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        } else if (books.isEmpty()) {
-            Text("No books available for this category", style = MaterialTheme.typography.bodyLarge)
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(books.size) { index ->
-                    val book = books[index]
-                    BookCard(
-                        title = book.volumeInfo.title,
-                        author = book.volumeInfo.authors?.joinToString(", ") ?: "Unknown Author",
-                        thumbnail = book.volumeInfo.imageLinks?.thumbnail,
-                        onClick = {
-                            navController.navigate("bookDetails/${book.id}") // Use the book's unique ID
-                        }
-                    )
+        when {
+            loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
 
+            books.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No books available for this category",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+            else -> {
+                if (books.isEmpty()) {
+                    Text(
+                        text = "No books found",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(books) { book ->
+                            BookCard(
+                                book = book,
+                                onClick = {
+                                    navController.navigate("bookDetails/${book.id}")
+                                }
+                            )
+                        }
+                    }
+                }
+            }
 
 
         }
     }
 }
-
 
 @Composable
 fun BookCard(
-    title: String,
-    author: String,
-    thumbnail: String?,
+    book: BookItem,
     onClick: () -> Unit
 ) {
+    val imageUrl = book.volumeInfo.imageLinks?.thumbnail ?: book.volumeInfo.imageLinks?.smallThumbnail
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable { onClick() }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = rememberImagePainter(data = thumbnail),
-            contentDescription = null,
-            modifier = Modifier.size(64.dp)
-        )
+        // Thumbnail
+        if (!imageUrl.isNullOrEmpty()) {
+            Image(
+                painter = rememberImagePainter(data = imageUrl),
+                contentDescription = "Book Thumbnail",
+                modifier = Modifier.size(64.dp)
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(Color.Gray),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No Image",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.width(8.dp))
+
+        // Title and Author
         Column {
-            Text(text = title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-            Text(text = author, style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = book.volumeInfo.title ?: "Unknown Title",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = book.volumeInfo.authors?.joinToString(", ") ?: "Unknown Author",
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }
-
