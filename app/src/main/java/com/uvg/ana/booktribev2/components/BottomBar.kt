@@ -11,8 +11,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun BottomBar(navController: NavController) {
     val items = listOf(
+
         BottomNavItem.Explore,
         BottomNavItem.Search,
+        BottomNavItem.Home,    // New Home option
         BottomNavItem.Saved
     )
 
@@ -35,7 +37,9 @@ fun BottomBar(navController: NavController) {
 }
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
+
     object Explore : BottomNavItem("explore", Icons.Default.Explore, "Explore")
     object Search : BottomNavItem("search", Icons.Default.Search, "Search")
+    object Home : BottomNavItem("home", Icons.Default.Home, "Home")    // New Home option
     object Saved : BottomNavItem("saved", Icons.Default.Bookmark, "Saved")
 }

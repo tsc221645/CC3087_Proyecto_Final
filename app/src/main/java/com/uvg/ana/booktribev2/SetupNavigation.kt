@@ -14,6 +14,7 @@ import com.uvg.ana.booktribev2.components.TopBar
 import com.uvg.ana.booktribev2.login.LoginScreen
 import com.uvg.ana.booktribev2.register.RegisterScreen
 import com.uvg.ana.booktribev2.home.HomeRoute
+import com.uvg.ana.booktribev2.profile.ProfileScreen
 
 @Composable
 fun SetupNavigation() {
@@ -23,13 +24,12 @@ fun SetupNavigation() {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
-    // Determine if TopBar and BottomBar should be displayed
     val showBars = currentRoute != "login" && currentRoute != "register"
 
     Scaffold(
         topBar = {
             if (showBars) {
-                TopBar(title = "Home") // Cambia el título dinámicamente si es necesario
+                TopBar(title = "Home", navController = navController)
             }
         },
         bottomBar = {
@@ -43,11 +43,9 @@ fun SetupNavigation() {
             startDestination = "login",
             modifier = Modifier.padding(innerPadding)
         ) {
-            // Login Screen
             composable("login") {
                 LoginScreen(navController = navController)
             }
-            // Register Screen
             composable("register") {
                 RegisterScreen(
                     onRegisterSuccess = {
@@ -60,11 +58,9 @@ fun SetupNavigation() {
                     }
                 )
             }
-            // Home Screen with BottomBar and TopBar
             composable("home") {
                 HomeRoute(navController = navController)
             }
-            // Additional Screens (Explore, Search, Saved)
             composable("explore") {
                 // Implement Explore Screen here
             }
@@ -73,6 +69,9 @@ fun SetupNavigation() {
             }
             composable("saved") {
                 // Implement Saved Screen here
+            }
+            composable("profile") {
+                ProfileScreen(navController = navController)
             }
         }
     }
