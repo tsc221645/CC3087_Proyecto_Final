@@ -4,8 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,8 +28,8 @@ fun TopBar(title: String, navController: NavController) {
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary, // TopBar background color
-            titleContentColor = Color.White // Title text color
+            containerColor = MaterialTheme.colorScheme.primary, // Background color
+            titleContentColor = Color.White // Title color
         )
     )
 }

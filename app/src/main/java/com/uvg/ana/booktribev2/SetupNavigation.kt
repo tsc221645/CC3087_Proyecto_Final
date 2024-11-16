@@ -11,9 +11,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.uvg.ana.booktribev2.components.BottomBar
 import com.uvg.ana.booktribev2.components.TopBar
+import com.uvg.ana.booktribev2.home.HomeRoute
 import com.uvg.ana.booktribev2.login.LoginScreen
 import com.uvg.ana.booktribev2.register.RegisterScreen
-import com.uvg.ana.booktribev2.home.HomeRoute
 import com.uvg.ana.booktribev2.profile.ProfileScreen
 
 @Composable
@@ -24,12 +24,22 @@ fun SetupNavigation() {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
+    // Determine the title based on the current route
+    val title = when (currentRoute) {
+        "home" -> "Home"
+        "profile" -> "Profile"
+        "explore" -> "Explore"
+        "search" -> "Search"
+        "saved" -> "Saved"
+        else -> "App" // Default title
+    }
+
     val showBars = currentRoute != "login" && currentRoute != "register"
 
     Scaffold(
         topBar = {
             if (showBars) {
-                TopBar(title = "Home", navController = navController)
+                TopBar(title = title, navController = navController)
             }
         },
         bottomBar = {
@@ -43,9 +53,11 @@ fun SetupNavigation() {
             startDestination = "login",
             modifier = Modifier.padding(innerPadding)
         ) {
+            // Login Screen
             composable("login") {
                 LoginScreen(navController = navController)
             }
+            // Register Screen
             composable("register") {
                 RegisterScreen(
                     onRegisterSuccess = {
@@ -58,20 +70,23 @@ fun SetupNavigation() {
                     }
                 )
             }
+            // Home Screen
             composable("home") {
                 HomeRoute(navController = navController)
             }
-            composable("explore") {
-                // Implement Explore Screen here
-            }
-            composable("search") {
-                // Implement Search Screen here
-            }
-            composable("saved") {
-                // Implement Saved Screen here
-            }
+            // Profile Screen
             composable("profile") {
                 ProfileScreen(navController = navController)
+            }
+            // Additional screens (explore, search, saved)
+            composable("explore") {
+                // Implement Explore Screen
+            }
+            composable("search") {
+                // Implement Search Screen
+            }
+            composable("saved") {
+                // Implement Saved Screen
             }
         }
     }
