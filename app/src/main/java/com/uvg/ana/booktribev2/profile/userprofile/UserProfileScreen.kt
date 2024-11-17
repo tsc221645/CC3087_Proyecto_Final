@@ -25,6 +25,7 @@ import com.uvg.ana.booktribev2.R
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.lazy.LazyColumn
 
 class UserProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,9 +43,8 @@ class UserProfileActivity : ComponentActivity() {
 @Composable
 fun UserProfileScreen(
     onEditProfileClick: () -> Unit, // Callback para el botón de editar perfil
-    onSettingsClick: () -> Unit,    // Callback para el botón de configuraciones
+    onSettingsClick: () -> Unit    // Callback para el botón de configuraciones
 ) {
-    // Utilizando Material3 Theme con Dark Mode
     MaterialTheme(
         colorScheme = darkColorScheme() // Esquema de colores oscuros
     ) {
@@ -52,99 +52,112 @@ fun UserProfileScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background // Fondo oscuro
         ) {
-            Column(
+            // LazyColumn permite el desplazamiento para evitar el solapamiento del contenido
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Imagen de fondo (banner)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.booktribelogodark), // Reemplaza con tu imagen de fondo
-                        contentDescription = "Background image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-
-                // Imagen de perfil circular parcialmente superpuesta
-                Box(
-                    modifier = Modifier
-                        .offset(y = (-50).dp) // Mover hacia arriba para superponer sobre el fondo
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .shadow(8.dp, CircleShape)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.booktribelogodark), // Reemplaza con tu imagen de perfil
-                        contentDescription = "Profile Picture",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp)) // Espacio entre la imagen y el texto
-
-                // Nombre del usuario
-                Text(
-                    text = "Samantha Josephus", // Puedes reemplazar con datos reales
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = Color.White,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-
-                // Nombre de usuario
-                Text(
-                    text = "@sam_jose3", // Puedes reemplazar con datos reales
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                // Biografía del usuario
-                Text(
-                    text = "Una entusiasta de la lectura de ceincia ficcion y aventura. Dispuesta a descubrir nuevos libros para abrir mi mente",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    lineHeight = 20.sp
-                )
-
-                // Botones debajo de la biografía
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(
-                        onClick = onEditProfileClick,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        ),
-                        modifier = Modifier.weight(1f)
+                item {
+                    // Imagen de fondo (banner)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
                     ) {
-                        Text("Edit Profile")
+                        Image(
+                            painter = painterResource(id = R.drawable.booktribelogodark), // Reemplaza con tu imagen de fondo
+                            contentDescription = "Background image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
+                }
 
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Button(
-                        onClick = onSettingsClick,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        ),
-                        modifier = Modifier.weight(1f)
+                item {
+                    // Imagen de perfil circular parcialmente superpuesta
+                    Box(
+                        modifier = Modifier
+                            .offset(y = (-50).dp) // Mover hacia arriba para superponer sobre el fondo
+                            .size(120.dp)
+                            .clip(CircleShape)
+                            .shadow(8.dp, CircleShape)
                     ) {
-                        Text("Settings")
+                        Image(
+                            painter = painterResource(id = R.drawable.booktribelogodark), // Reemplaza con tu imagen de perfil
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp)) // Espacio entre la imagen y el texto
+
+                    // Nombre del usuario
+                    Text(
+                        text = "Samantha Josephus", // Puedes reemplazar con datos reales
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+
+                item {
+                    // Nombre de usuario
+                    Text(
+                        text = "@sam_jose3", // Puedes reemplazar con datos reales
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+
+                item {
+                    // Biografía del usuario
+                    Text(
+                        text = "Una entusiasta de la lectura de ciencia ficción y aventura. Dispuesta a descubrir nuevos libros para abrir mi mente",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White,
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        lineHeight = 20.sp
+                    )
+                }
+
+                item {
+                    // Botones debajo de la biografía
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = onEditProfileClick,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            ),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Edit Profile")
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Button(
+                            onClick = onSettingsClick,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary
+                            ),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Settings")
+                        }
                     }
                 }
             }

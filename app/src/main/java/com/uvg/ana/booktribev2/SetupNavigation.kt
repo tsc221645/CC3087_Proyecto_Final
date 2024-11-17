@@ -19,6 +19,7 @@ import com.uvg.ana.booktribev2.login.LoginScreen
 import com.uvg.ana.booktribev2.register.RegisterScreen
 import com.uvg.ana.booktribev2.profile.ProfileScreen
 import com.uvg.ana.booktribev2.search.SearchScreen
+import com.uvg.ana.booktribev2.userprofile.UserProfileNavigation
 
 @Composable
 fun SetupNavigation() {
@@ -80,7 +81,7 @@ fun SetupNavigation() {
             }
             // Profile Screen
             composable("profile") {
-                ProfileScreen(navController = navController)
+                UserProfileNavigation()
             }
             composable("explore") {
                 ExploreScreen(

@@ -30,8 +30,7 @@ fun ReadingPreferencesScreen() {
     var selectedItem by remember { mutableStateOf(0) }
 
     Scaffold(
-        topBar = { TopBar(title = "Reading Preferences",navController = navController) },
-
+       
         content = { paddingValues ->
             Column(
                 modifier = Modifier

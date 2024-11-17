@@ -5,8 +5,10 @@ import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,7 +35,6 @@ fun EditUserProfileScreen(
     var age by remember { mutableStateOf("") }
     var isPrivate by remember { mutableStateOf(false) }
 
-    // Para el selector de fecha
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
@@ -46,21 +47,20 @@ fun EditUserProfileScreen(
         }, year, month, day
     )
 
-    // Utilizando Material3 Theme con Dark Mode
     MaterialTheme(
-        colorScheme = darkColorScheme() // Esquema de colores oscuros
+        colorScheme = darkColorScheme()
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background // Fondo oscuro
+            color = MaterialTheme.colorScheme.background
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()), // Hacer que sea desplazable
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Imagen de fondo (banner) editable
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -69,7 +69,7 @@ fun EditUserProfileScreen(
                         .clickable { /* Acción para editar foto de fondo */ }
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.booktribelogodark), // Reemplaza con tu imagen de fondo
+                        painter = painterResource(id = R.drawable.booktribelogodark),
                         contentDescription = "Background image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
@@ -77,20 +77,21 @@ fun EditUserProfileScreen(
                     Text(
                         text = "Edit background",
                         color = Color.White,
-                        modifier = Modifier.align(Alignment.BottomCenter).padding(8.dp)
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(8.dp)
                     )
                 }
 
-                // Imagen de perfil circular editable
                 Box(
                     modifier = Modifier
-                        .offset(y = (-50).dp) // Mover hacia arriba para superponer sobre el fondo
+                        .offset(y = (-50).dp)
                         .size(120.dp)
                         .clip(CircleShape)
                         .clickable { /* Acción para editar foto de perfil */ }
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.booktribelogodark), // Reemplaza con tu imagen de perfil
+                        painter = painterResource(id = R.drawable.booktribelogodark),
                         contentDescription = "Profile Picture",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
@@ -98,13 +99,14 @@ fun EditUserProfileScreen(
                     Text(
                         text = "Edit profile picture",
                         color = Color.White,
-                        modifier = Modifier.align(Alignment.BottomCenter).padding(8.dp)
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(8.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp)) // Espacio entre la imagen y el texto
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // Campo para editar el nombre
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -115,11 +117,9 @@ fun EditUserProfileScreen(
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color.White,
                         unfocusedBorderColor = Color.Gray,
-                        //textColor = Color.White
                     )
                 )
 
-                // Campo para editar la biografía
                 OutlinedTextField(
                     value = bio,
                     onValueChange = { bio = it },
@@ -130,11 +130,9 @@ fun EditUserProfileScreen(
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color.White,
                         unfocusedBorderColor = Color.Gray,
-                        //textColor = Color.White
                     )
                 )
 
-                // Campo para editar la edad con un selector de fecha
                 OutlinedTextField(
                     value = age,
                     onValueChange = { },
@@ -145,15 +143,13 @@ fun EditUserProfileScreen(
                         .clickable {
                             datePickerDialog.show()
                         },
-                    enabled = false, // No editable directamente, solo mediante el calendario
+                    enabled = false,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color.White,
                         unfocusedBorderColor = Color.Gray,
-                       // textColor = Color.White
                     )
                 )
 
-                // Selector para perfil privado/público
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -173,7 +169,6 @@ fun EditUserProfileScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Botones de Cancelar y Guardar
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly

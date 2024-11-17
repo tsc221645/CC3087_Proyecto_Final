@@ -36,8 +36,6 @@ fun SettingsScreen(navController: NavHostController) {
     var selectedItem by remember { mutableStateOf(0) }
 
     Scaffold(
-        topBar = { TopBar( title = "Settings",navController = navController) },
-
         content = { paddingValues ->
             Column(
                 modifier = Modifier
@@ -145,7 +143,7 @@ fun SettingsScreenTemplate(title: String, content: @Composable ColumnScope.() ->
     var selectedItem by remember { mutableStateOf(0) }
 
     Scaffold(
-        topBar = { TopBar(title = title,navController = navController) },
+
 
         content = { paddingValues ->
             Column(
