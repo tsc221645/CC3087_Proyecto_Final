@@ -1,6 +1,7 @@
 package com.uvg.ana.booktribev2.network
 
 
+import com.uvg.ana.booktribev2.BuildConfig
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -20,13 +21,14 @@ data class VolumeInfo(
     val description: String?,
     val publishedDate: String?,
     val pageCount: Int?,
-    val categories: List<String>?,
     val imageLinks: ImageLinks?
 )
 
 data class ImageLinks(
-    val thumbnail: String
+    val smallThumbnail: String?,
+    val thumbnail: String?
 )
+
 interface GoogleBooksApiService {
     @GET("volumes")
     suspend fun searchBooks(
@@ -37,7 +39,7 @@ interface GoogleBooksApiService {
     @GET("volumes/{id}")
     suspend fun getBookDetails(
         @Path("id") id: String,
-        @Query("key") apiKey: String
+        @Query("key") apiKey: String = BuildConfig.GOOGLE_BOOKS_API_KEY
     ): BookItem
 
     companion object {
