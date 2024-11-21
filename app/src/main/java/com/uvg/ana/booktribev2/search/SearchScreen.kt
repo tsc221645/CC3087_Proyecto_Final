@@ -2,6 +2,7 @@ package com.uvg.ana.booktribev2.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
@@ -17,7 +18,10 @@ import coil.compose.rememberImagePainter
 import com.uvg.ana.booktribev2.viewmodel.BooksViewModel
 
 @Composable
-fun SearchScreen(booksViewModel: BooksViewModel = viewModel()) {
+fun SearchScreen(
+    booksViewModel: BooksViewModel = viewModel(),
+    onBookClick: (String) -> Unit
+) {
     val books by booksViewModel.books.collectAsState()
     val loading by booksViewModel.loading.collectAsState()
     var query by remember { mutableStateOf(TextFieldValue("")) }
@@ -28,12 +32,11 @@ fun SearchScreen(booksViewModel: BooksViewModel = viewModel()) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        // Input field for search query
         BasicTextField(
             value = query,
             onValueChange = { query = it },
             textStyle = TextStyle(
-                color = Color.White, // Set the text color to white
+                color = Color.White,
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize
             ),
             modifier = Modifier
@@ -46,8 +49,7 @@ fun SearchScreen(booksViewModel: BooksViewModel = viewModel()) {
                 .height(56.dp),
             decorationBox = { innerTextField ->
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     if (query.text.isEmpty()) {
@@ -63,10 +65,8 @@ fun SearchScreen(booksViewModel: BooksViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Search button
         Button(
             onClick = {
-                println("Search button clicked with query: ${query.text}")
                 booksViewModel.searchBooks(query.text)
             },
             modifier = Modifier.fillMaxWidth()
@@ -76,7 +76,6 @@ fun SearchScreen(booksViewModel: BooksViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Show a loading indicator or results
         if (loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
@@ -84,7 +83,11 @@ fun SearchScreen(booksViewModel: BooksViewModel = viewModel()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .padding(vertical = 8.dp)
+                        .clickable {
+                            // Llamar al callback con el ID del libro
+                            book.id?.let { onBookClick(it) }
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(

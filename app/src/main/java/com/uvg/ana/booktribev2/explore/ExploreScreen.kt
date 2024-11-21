@@ -22,10 +22,10 @@ import java.net.URLEncoder
 
 @Composable
 fun ExploreScreen(
-    navController: NavController, // Accept navController as a parameter
+    navController: NavController,
     booksViewModel: BooksViewModel = viewModel(),
-    onBookClick: (String) -> Unit, // Navigate to BookDetailsScreen
-    onCategoryClick: (String) -> Unit // Navigate to CategoryScreen
+    onBookClick: (String) -> Unit,
+    onCategoryClick: (String) -> Unit
 ) {
     val books by booksViewModel.books.collectAsState()
     val loading by booksViewModel.loading.collectAsState()
@@ -42,6 +42,9 @@ fun ExploreScreen(
         "Mystery"
     )
 
+    // Estado para la categoría seleccionada
+    var selectedCategory by remember { mutableStateOf(categories[0]) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,29 +58,35 @@ fun ExploreScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Categories
+        // Categorías
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(categories.size) { index ->
                 val category = categories[index]
-                TextButton(
+                Button(
                     onClick = {
-                        val encodedCategory = URLEncoder.encode(category, "UTF-8") // Encode the category
+                        selectedCategory = category
+                        val encodedCategory = URLEncoder.encode(category, "UTF-8")
                         onCategoryClick(encodedCategory)
                     },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary
-                    )
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (selectedCategory == category) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                        contentColor = if (selectedCategory == category) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                    ),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text(text = category, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = category,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Books
+        // Libros
         if (loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else if (books.isEmpty()) {
@@ -93,18 +102,14 @@ fun ExploreScreen(
                         author = book.volumeInfo.authors?.joinToString(", ") ?: "Unknown Author",
                         thumbnail = book.volumeInfo.imageLinks?.thumbnail,
                         onClick = {
-                            navController.navigate("bookDetails/${book.id}") // Use the book's unique ID
+                            navController.navigate("bookDetails/${book.id}")
                         }
                     )
                 }
             }
-
-
-
         }
     }
 }
-
 
 @Composable
 fun BookCard(
@@ -132,4 +137,3 @@ fun BookCard(
         }
     }
 }
-

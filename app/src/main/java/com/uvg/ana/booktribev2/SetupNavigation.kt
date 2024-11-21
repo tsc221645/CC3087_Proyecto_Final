@@ -25,18 +25,16 @@ import com.uvg.ana.booktribev2.userprofile.UserProfileNavigation
 fun SetupNavigation() {
     val navController = rememberNavController()
 
-    // Get the current route
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
-    // Determine the title based on the current route
     val title = when (currentRoute) {
         "home" -> "Home"
         "profile" -> "Profile"
         "explore" -> "Explore"
         "search" -> "Search"
         "saved" -> "Saved"
-        else -> "App" // Default title
+        else -> "App"
     }
 
     val showBars = currentRoute != "login" && currentRoute != "register"
@@ -58,11 +56,9 @@ fun SetupNavigation() {
             startDestination = "login",
             modifier = Modifier.padding(innerPadding)
         ) {
-            // Login Screen
             composable("login") {
                 LoginScreen(navController = navController)
             }
-            // Register Screen
             composable("register") {
                 RegisterScreen(
                     onRegisterSuccess = {
@@ -75,11 +71,9 @@ fun SetupNavigation() {
                     }
                 )
             }
-            // Home Screen
             composable("home") {
                 HomeRoute(navController = navController)
             }
-            // Profile Screen
             composable("profile") {
                 UserProfileNavigation()
             }
@@ -94,27 +88,26 @@ fun SetupNavigation() {
                     }
                 )
             }
-
             composable("bookDetails/{bookId}") { backStackEntry ->
                 val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
                 BookDetailsScreen(bookId = bookId)
             }
-
-
             composable("category/{category}") { backStackEntry ->
                 val category = backStackEntry.arguments?.getString("category") ?: ""
                 CategoryScreen(
-                    navController = navController, // Pass the navController
+                    navController = navController,
                     category = category,
                     onBookClick = { bookId ->
                         navController.navigate("bookDetails/$bookId")
                     }
                 )
             }
-
-
             composable("search") {
-                SearchScreen()
+                SearchScreen(
+                    onBookClick = { bookId ->
+                        navController.navigate("bookDetails/$bookId")
+                    }
+                )
             }
             composable("saved") {
                 // Implement Saved Screen
