@@ -26,6 +26,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 class UserProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +45,10 @@ class UserProfileActivity : ComponentActivity() {
 @Composable
 fun UserProfileScreen(
     onEditProfileClick: () -> Unit, // Callback para el botón de editar perfil
-    onSettingsClick: () -> Unit    // Callback para el botón de configuraciones
+    onSettingsClick: () -> Unit,    // Callback para el botón de configuraciones
+    onLogoutClick: () -> Unit ,      // Callback para el botón de cerrar sesión
+
+    navController: NavController
 ) {
     MaterialTheme(
         colorScheme = darkColorScheme() // Esquema de colores oscuros
@@ -160,16 +165,42 @@ fun UserProfileScreen(
                         }
                     }
                 }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp)) // Espacio entre botones
+
+                    Button(
+                        onClick = {
+                            onLogoutClick() // Ejecutar el callback de cerrar sesión
+                            navController.popBackStack() // Limpiar el stack de navegación
+                            navController.navigate("login") { // Navegar al login
+                                popUpTo("login") { inclusive = true } // Eliminar pantallas previas del stack
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error // Color para el logout
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                    ) {
+                        Text("Log Out")
+                    }
+                }
             }
         }
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewUserProfileScreen() {
+    val navController = rememberNavController()
     UserProfileScreen(
         onEditProfileClick = {},
-        onSettingsClick = {}
+        onSettingsClick = {},
+        onLogoutClick = {},
+        navController = navController
     )
 }
