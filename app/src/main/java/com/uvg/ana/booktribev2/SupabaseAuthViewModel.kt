@@ -82,15 +82,15 @@ class SupabaseAuthViewModel : ViewModel() {
     fun logout() {
         viewModelScope.launch {
             try {
+                // Lógica de logout
                 client.gotrue.logout()
-                println("Logout successful!")
                 _userState.value = UserState.Success("Logged out successfully!")
             } catch (e: Exception) {
-                println("Logout failed: ${e.message}")
                 _userState.value = UserState.Error("Error: ${e.message}")
             }
         }
     }
+
 
     fun isUserLoggedIN(context: Context) {
         viewModelScope.launch {

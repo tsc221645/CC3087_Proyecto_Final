@@ -88,6 +88,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
 
     implementation("androidx.compose.material:material-icons-extended:1.5.1")
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

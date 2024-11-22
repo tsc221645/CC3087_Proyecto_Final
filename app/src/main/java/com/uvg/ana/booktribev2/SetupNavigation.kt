@@ -18,24 +18,25 @@ import com.uvg.ana.booktribev2.home.HomeRoute
 import com.uvg.ana.booktribev2.login.LoginScreen
 import com.uvg.ana.booktribev2.register.RegisterScreen
 import com.uvg.ana.booktribev2.profile.ProfileScreen
+
+
 import com.uvg.ana.booktribev2.search.SearchScreen
+import com.uvg.ana.booktribev2.userprofile.UserProfileNavigation
 
 @Composable
 fun SetupNavigation() {
     val navController = rememberNavController()
 
-    // Get the current route
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
-    // Determine the title based on the current route
     val title = when (currentRoute) {
         "home" -> "Home"
         "profile" -> "Profile"
         "explore" -> "Explore"
         "search" -> "Search"
         "saved" -> "Saved"
-        else -> "App" // Default title
+        else -> "App"
     }
 
     val showBars = currentRoute != "login" && currentRoute != "register"
@@ -57,11 +58,9 @@ fun SetupNavigation() {
             startDestination = "login",
             modifier = Modifier.padding(innerPadding)
         ) {
-            // Login Screen
             composable("login") {
                 LoginScreen(navController = navController)
             }
-            // Register Screen
             composable("register") {
                 RegisterScreen(
                     onRegisterSuccess = {
@@ -74,49 +73,47 @@ fun SetupNavigation() {
                     }
                 )
             }
-            // Home Screen
             composable("home") {
                 HomeRoute(navController = navController)
             }
-            // Profile Screen
             composable("profile") {
-                ProfileScreen(navController = navController)
+                UserProfileNavigation()
             }
             composable("explore") {
                 ExploreScreen(
-                    navController = navController, // Pass NavController directly to ExploreScreen
+                    navController = navController,
+                    onBookClick = { bookId ->
+                        navController.navigate("bookDetails/$bookId")
+                    },
                     onCategoryClick = { category ->
-                        val encodedCategory = java.net.URLEncoder.encode(category, "UTF-8")
-                        navController.navigate("category/$encodedCategory")
+                        navController.navigate("category/$category")
                     }
                 )
             }
-
             composable("bookDetails/{bookId}") { backStackEntry ->
                 val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
                 BookDetailsScreen(bookId = bookId)
             }
-
-
             composable("category/{category}") { backStackEntry ->
                 val category = backStackEntry.arguments?.getString("category") ?: ""
                 CategoryScreen(
+                    navController = navController,
                     category = category,
-                    navController = navController, // Pass the navController
                     onBookClick = { bookId ->
                         navController.navigate("bookDetails/$bookId")
                     }
                 )
             }
-
-
-
-
             composable("search") {
-                SearchScreen(navController = navController)
+                SearchScreen(
+                    onBookClick = { bookId ->
+                        navController.navigate("bookDetails/$bookId")
+                    }
+                )
             }
             composable("saved") {
                 // Implement Saved Screen
+
             }
         }
     }
