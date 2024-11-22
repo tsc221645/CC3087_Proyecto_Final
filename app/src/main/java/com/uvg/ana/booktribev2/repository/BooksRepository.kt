@@ -13,8 +13,9 @@ class BooksRepository(private val apiService: GoogleBooksApiService = RetrofitIn
         return response
     }
 
-    suspend fun getBookDetails(bookId: String, apiKey: String): BookItem {
-        return apiService.getBookDetails(bookId, apiKey)
+    suspend fun getBookDetails(bookId: String): BookItem {
+        return apiService.getBookDetails(bookId)
     }
+
 
 }

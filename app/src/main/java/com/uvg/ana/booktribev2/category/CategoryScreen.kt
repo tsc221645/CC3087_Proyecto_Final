@@ -2,6 +2,7 @@ package com.uvg.ana.booktribev2.category
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,16 +21,15 @@ import java.net.URLDecoder
 
 @Composable
 fun CategoryScreen(
-    navController: NavController, // Accept navController as a parameter
     category: String,
+    navController: androidx.navigation.NavController,
     booksViewModel: BooksViewModel = viewModel(),
     onBookClick: (String) -> Unit
 ) {
-    // State for loading and books
-    val loading by booksViewModel.loading.collectAsState()
     val books by booksViewModel.books.collectAsState()
+    val loading by booksViewModel.loading.collectAsState()
 
-    // Trigger the API call when the screen loads
+    // Fetch books for the selected category
     LaunchedEffect(category) {
         booksViewModel.getBooksByCategory(category)
     }
@@ -40,36 +40,48 @@ fun CategoryScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = category,
+            text = "Category: $category",
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        when {
+            loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
 
-        // Show loading indicator or results
-        if (loading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        } else if (books.isEmpty()) {
-            Text("No books available in this category", style = MaterialTheme.typography.bodyLarge)
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(books.size) { index ->
-                    val book = books[index]
-                    BookCard(
-                        title = book.volumeInfo.title,
-                        author = book.volumeInfo.authors?.joinToString(", ") ?: "Unknown Author",
-                        thumbnail = book.volumeInfo.imageLinks?.thumbnail,
-                        onClick = {
-                            navController.navigate("bookDetails/${book.id}") // Use the book's unique ID
-                        }
+            books.isNullOrEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No books available in this category",
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
 
-
+            else -> {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(books) { book ->
+                        BookCard(
+                            book = book,
+                            onClick = {
+                                onBookClick(book.id) // Call onBookClick with book ID
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
